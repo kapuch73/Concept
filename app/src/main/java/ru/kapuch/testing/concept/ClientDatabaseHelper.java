@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ClientDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "conceptclient.db";
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 2;
 
 
     ClientDatabaseHelper (Context context) {
@@ -17,7 +17,7 @@ public class ClientDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        updateMyDatabase(db, 3, DB_VERSION);
+        updateMyDatabase(db, 1, DB_VERSION);
         db.execSQL("CREATE TABLE CLIENT (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "LTD TEXT, "
                 + "COMPANY_NAME TEXT, "
@@ -38,7 +38,7 @@ public class ClientDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void updateMyDatabase(SQLiteDatabase db, int oldVersion, int newVersion) {
-       if (oldVersion < 4){
+       if (oldVersion < 3){
             db.execSQL("ALTER TABLE CLIENT ADD COLUMN ALTERNATIVE_CONTACT TEXT;");
         }
     }
