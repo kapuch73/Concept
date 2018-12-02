@@ -20,7 +20,7 @@ public class Client_list extends ListActivity {
     private SQLiteDatabase db;
     private Cursor cursor;
 
-    private static final String EXTRA_CLIENTNO = "clientNo";
+    static final String EXTRA_CLIENTNO = "clientNo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class Client_list extends ListActivity {
             db = clientDatabaseHelper.getReadableDatabase();
 
             cursor = db.query("CLIENT",
-                    new String[]{"_id", "COMPANY_NAME", "CONTACT_NAME"},
+                    new String[]{"_id", "COMPANY_NAME", "CONTACT_NAME",},
                     null, null, null, null, null);
 
             CursorAdapter clientListAdapter = new SimpleCursorAdapter(this,

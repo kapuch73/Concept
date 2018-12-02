@@ -1,6 +1,7 @@
 package ru.kapuch.testing.concept;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -8,6 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,10 +28,10 @@ public class ClientInfo extends Activity {
 
         try {
             SQLiteOpenHelper clientDatabaseHelper = new ClientDatabaseHelper(this);
-            SQLiteDatabase db = clientDatabaseHelper.getReadableDatabase();
+            SQLiteDatabase db = clientDatabaseHelper.getWritableDatabase();
             Cursor cursor = db.query("CLIENT",
                     new String[]{"LTD", "COMPANY_NAME", "CONTACT_NAME", "CONTACT_PHONE",
-                            "CONTACT_EMAIL", "DESCRIPTION"},
+                            "CONTACT_EMAIL", "DESCRIPTION", "COMPLETE"},
                     "_id = ?",
                     new String[] {Integer.toString(clientNo)},
                     null, null, null);
@@ -38,6 +42,7 @@ public class ClientInfo extends Activity {
                 String phoneText = cursor.getString(3);
                 String emailText = cursor.getString(4);
                 String descriptionText = cursor.getString(5);
+                boolean isComplete = (cursor.getInt(6) == 1);
 
                 TextView ltd = findViewById(R.id.ltd);
                 ltd.setText(ltdText);
@@ -56,12 +61,33 @@ public class ClientInfo extends Activity {
 
                 TextView description = findViewById(R.id.description);
                 description.setText(descriptionText);
+
+                CheckBox complete = findViewById(R.id.complete);
+                complete.setChecked(isComplete);
             }
             cursor.close();
             db.close();
         } catch (SQLException e) {
             Toast toast = Toast.makeText(this, "Database Client_no_use Info unavailable",
                     Toast.LENGTH_SHORT);
+            toast.show();
+        }
+    }
+
+
+    public void onCompleted (View view) {
+        int clientNo = (Integer)getIntent().getExtras().get("clientNo");
+        CheckBox complete = findViewById(R.id.complete);
+        ContentValues clientValues = new ContentValues();
+        clientValues.put("COMPLETE", complete.isChecked());
+        SQLiteOpenHelper clientDatabaseHelper = new ClientDatabaseHelper(ClientInfo.this);
+        try {
+            SQLiteDatabase db = clientDatabaseHelper.getWritableDatabase();
+            db.update("CLIENT", clientValues,
+                    "_id = ?", new String[] {Integer.toString(clientNo)});
+            db.close();
+        } catch (SQLException e) {
+            Toast toast = Toast.makeText(this, "Database not COMPLETE", Toast.LENGTH_SHORT);
             toast.show();
         }
     }
